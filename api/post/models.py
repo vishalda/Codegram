@@ -41,4 +41,10 @@ class ForkedPost(models.Model):
 	PostID=models.ForeignKey(Post,on_delete=models.CASCADE)
 	Description=models.TextField(null=True)
 	Created_at=models.DateTimeField(null=False)
+class PullRequest(models.Model):
+	PullRequestID=models.AutoField(primary_key=True)
+	ForkID=models.ForeignKey(ForkedPost,on_delete=models.CASCADE)
+	ToUserID=models.ForeignKey(User,on_delete=models.CASCADE,related_name='toUser')
+	FromUserID=models.ForeignKey(User,on_delete=models.CASCADE,related_name='fromUser')
+	PRstatus=models.BooleanField(null=True,default=None)
 
