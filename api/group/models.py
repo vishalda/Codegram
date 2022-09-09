@@ -6,7 +6,7 @@ from api.user.models import User
 class Group(models.Model):
     Title = models.CharField(max_length=50)
     Description = models.TextField(null=True)
-    Image = models.ImageField(null=True)
+    Image = models.ImageField(null=True,blank=True)
 
 class FollowGroup(models.Model):
     UserID = models.ForeignKey(User, related_name='user',on_delete=models.CASCADE)
