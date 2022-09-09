@@ -27,7 +27,7 @@ class LikePost(models.Model):
 class CommentPost(models.Model):
 	PostID=models.ForeignKey(Post,on_delete=models.CASCADE)
 	UserID=models.ForeignKey(User,on_delete=models.SET(get_deleted))
-	ReplyID=models.ForeignKey('self',on_delete=models.CASCADE)
+	ReplyID=models.ForeignKey('self',on_delete=models.CASCADE,null=True,blank=True,related_name='replyid')
 	Content=models.TextField(null=False)
 	isAReply=models.BooleanField(default=False)
 	Vote=models.PositiveIntegerField(default=0)
