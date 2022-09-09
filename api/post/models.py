@@ -13,9 +13,9 @@ class Post(models.Model):
 	UserID=models.ForeignKey(User,on_delete=models.CASCADE)
 	Description=models.TextField(null=True)
 	PostType=models.CharField(max_length=15)
-	CodeBlock=models.TextField(null=True)
-	Image=models.ImageField(null=True)
-	CodeSnippet=models.TextField(null=True)
+	CodeBlock=models.TextField(blank=True,null=True)
+	Image=models.ImageField(blank=True,null=True)
+	CodeSnippet=models.TextField(blank=True,null=True)
 	CodeLanguage=models.CharField(max_length=15)
 	Created_at=models.DateTimeField(null=False)
 
