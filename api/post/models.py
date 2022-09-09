@@ -1,15 +1,14 @@
 from django.db import models
 from api.user.models import User
 from django.contrib.auth import get_user_model
-
-#from '../Group/models' import Group
+from api.group.models import Group
 from datetime import datetime
 # Create your models here.
 def get_deleted():
     return get_user_model().objects.get_or_create(username='Deleted User')[0]
 class Post(models.Model):
 	PostID=models.AutoField(primary_key=True)
-#	GroupId=models.ForeignKey(Group,on_delete=models.CASCADE)
+	GroupId=models.ForeignKey(Group,on_delete=models.CASCADE,null=True)
 	UserID=models.ForeignKey(User,on_delete=models.CASCADE)
 	Description=models.TextField(null=True)
 	PostType=models.CharField(max_length=15)
