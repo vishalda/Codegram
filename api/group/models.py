@@ -8,6 +8,11 @@ class Group(models.Model):
     Description = models.TextField(null=True)
     Image = models.ImageField(null=True,blank=True)
 
+    def __str__(self):
+        return self.Title
+
 class FollowGroup(models.Model):
     UserID = models.ForeignKey(User, related_name='user',on_delete=models.CASCADE)
     GroupID = models.ForeignKey(Group, related_name='group',on_delete=models.CASCADE)
+    def __str__(self):
+        return "%s follows %s" %(User.objects.values_list('username', flat=True).get(pk=self.UserID.id) ,Group.objects.values_list('Title', flat=True).get(pk=self.GroupID.id))
