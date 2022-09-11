@@ -3,12 +3,14 @@ from django.contrib.auth import get_user_model,login,logout
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
 from api.user.models import User
-#from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer
 from rest_framework.decorators import permission_classes
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 import random
 import re
+
+
 
 #Generating Session tokens
 def generateSessionToken(length=10):
@@ -22,6 +24,8 @@ def validateRequest(username,password):
     #Checking length of password
     if len(password) < 4:
         return JsonResponse({'error':'Password length should not be less than 4'})
+
+
 
 @csrf_exempt
 # Signin function
@@ -77,7 +81,7 @@ def signout(request,id):
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes_by_action = {'create':[AllowAny]}
     queryset = User.objects.all().order_by('id')
-    #serializer_class = RegistrationSerializer
+    serializer_class = RegisterSerializer
 
     def get_permission(self):
         try:

@@ -1,19 +1,11 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import RegexValidator
-
-class UserSerializer(serializers.ModelSerializer):
-class Meta:
-    model = User
-    fields = ["id", "name", "username"]
-
-
-class RegistrationSerializer(serializers.HyperlinkedModelSerializer):
+from django.contrib.auth import get_user_model
+User = get_user_model()
+class RegisterSerializer(serializers.ModelSerializer):
   username=serializers.CharField(
     required=True,
     validators=[UniqueValidator(queryset=User.objects.all()),UnicodeUsernameValidator]
@@ -38,8 +30,7 @@ class RegistrationSerializer(serializers.HyperlinkedModelSerializer):
   
   class Meta:
     model = User
-    fields = ('username', 'password', 'password2',
-         'email', 'phone')
+    fields = ('username', 'password', 'password2','email', 'phone')
     extra_kwargs = {
       'email': {'required': True},
       'phone': {'required': True},
