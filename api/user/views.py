@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.contrib.auth import get_user_model,login,logout
+from django.contrib.auth import get_user_model,login as auth_login,logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
 from api.user.models import User
@@ -36,6 +36,8 @@ def login(request):
     #Get data from request.POST
     username=request.POST['username']
     password=request.POST['password']
+    #username=request.POST.get('username')
+    #password=request.POST.get('password')
 
     validateRequest(username,password)
     UserModal=get_user_model()
@@ -54,17 +56,18 @@ def login(request):
             
             token = generateSessionToken()
             user.session_token = token
-            login(request,user)
+            auth_login(request,user)
+            user.save()
             return JsonResponse({'token':token,'data':data})
         else:
             return JsonResponse({'error':'Invalid credentials'})
     except UserModal.DoesNotExist:
         return JsonResponse({'error':'Username doesn\'t exist'})
 
-@csrf_exempt
 # Logout function
+@csrf_exempt
 def signout(request,id):
-    logout(request)
+    auth_logout(request)
 
     UserModal = get_user_model()
 
