@@ -82,7 +82,8 @@ def signout(request,id):
     return JsonResponse({'success':'Logged out successfully'})
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes_by_action = {'create':[AllowAny]}
+    #permission_classes_by_action = {'create':[AllowAny]}
+    permission_classes=[AllowAny,]
     queryset = User.objects.all().order_by('id')
     serializer_class = RegisterSerializer
 
