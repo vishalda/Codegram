@@ -9,12 +9,13 @@ def get_deleted():
 class Post(models.Model):
 	GroupId=models.ForeignKey(Group,on_delete=models.CASCADE,null=True,blank=True)
 	UserID=models.ForeignKey(User,on_delete=models.CASCADE)
+	PostTitle=models.CharField(max_length=50,null=False)
 	Description=models.TextField(null=True)
 	PostType=models.CharField(max_length=15)
 	CodeBlock=models.TextField(blank=True,null=True)
 	Image=models.ImageField(blank=True,null=True)
 	CodeSnippet=models.TextField(blank=True,null=True)
-	CodeLanguage=models.CharField(max_length=15)
+	CodeLanguage=models.CharField(max_length=15,null=True,blank=True)
 	Created_at=models.DateTimeField(null=False)
 
 	class Meta:
