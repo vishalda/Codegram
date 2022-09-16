@@ -4,12 +4,12 @@ from rest_framework import routers
 from rest_framework import generics
 from . import views
 
-#router = routers.DefaultRouter()
-#router.register(r'',views.UserViewSet)
+router = routers.DefaultRouter()
+router.register(r'',views.PostDetailViewSet)
 
 
 urlpatterns = [
     path('create-post/<int:userId>/',views.createPost,name='createPost'),
     path('delete-post/<int:postId>/',views.deletePost,name='deletePost'),
-#    path('',include(router.urls)),
+    path('',include(router.urls)),
 ]

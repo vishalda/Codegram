@@ -1,8 +1,10 @@
-from socket import create_server
 from django.utils import timezone
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+from api.post.serializers import PostDetailListSerializer
 from .models import Post
 from api.user.models import User
 
@@ -37,3 +39,8 @@ def deletePost(request,postId):
         return JsonResponse({'success':'Deleted post successfully'})
     except:
         return JsonResponse({'error':'Post doesn\'t exist'})
+
+class PostDetailViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny,]
+    queryset = Post.objects.all().order_by('-Created_at')
+    serializer_class = PostDetailListSerializer
