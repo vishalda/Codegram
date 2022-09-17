@@ -36,10 +36,10 @@ class CommentPost(models.Model):
 	ReplyID=models.ForeignKey('self',on_delete=models.CASCADE,null=True,blank=True,related_name='replyid')
 	Content=models.TextField(null=False)
 	isAReply=models.BooleanField(default=False)
-	Vote=models.PositiveIntegerField(default=0)
+	Vote=models.IntegerField(default=0)
 
 	def __str__(self):
-		if isAReply:
+		if self.isAReply:
 			return "%s replied to a comment on %d"%(User.objects.values_list('username', flat=True).get(pk=self.UserID.id),Post.objects.values_list('id', flat=True).get(pk=self.PostID.id))
 
 		else:

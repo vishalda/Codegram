@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from api.post.serializers import PostDetailListSerializer
-from .models import Post
+from .models import CommentPost, Post
 from api.user.models import User
 
 @csrf_exempt
@@ -33,12 +33,49 @@ def createPost(request,userId):
 @csrf_exempt
 def deletePost(request,postId):
     try:
-        instance = Post.objects.get(pk=postId)
+        instance = get_object_or_404(Post,pk=postId)
         instance.delete()
 
         return JsonResponse({'success':'Deleted post successfully'})
     except:
         return JsonResponse({'error':'Post doesn\'t exist'})
+
+@csrf_exempt
+def createComment(request,postId,userId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only POST request'})
+
+    try:
+        Content = request.POST['Content']
+        ReplyID = get_object_or_404(CommentPost,pk=int(request.POST['ReplyID'])) if 'ReplyID' in request.POST.keys() else None
+        isAReply = True if ReplyID is not None else False
+        
+        PostID = get_object_or_404(Post,pk=postId)
+        UserID = get_object_or_404(User,pk=userId)
+
+        instance = CommentPost.objects.create(PostID=PostID,UserID=UserID,Content=Content,isAReply=isAReply,ReplyID=ReplyID)
+        instance.save()
+        return JsonResponse({'success':'Comment created successfully'})
+    except:
+        return JsonResponse({'error':'Couldn\'t add comment. Please try again!'})
+
+@csrf_exempt
+def updateCommentVote(request,commentId):
+    if request.method != 'POST':
+        return JsonResponse({'error':'Accepting only POST request'})
+
+    try:
+        upVote = request.POST['upVote']
+        instance = get_object_or_404(CommentPost,pk=commentId)
+        if upVote == 'True':
+            instance.Vote+=1
+        else:
+            instance.Vote+=-1
+        instance.save()
+        return JsonResponse({'success':'Vote Updated successfully'})
+    except:
+        return JsonResponse({'error':'Couldn\'t update the vote'})
+    
 
 class PostDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny,]
