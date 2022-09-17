@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
-from api.post.serializers import PostDetailListSerializer
+from api.post.serializers import CommentListSerializer, PostDetailListSerializer
 from .models import CommentPost, Post
 from api.user.models import User
 
@@ -81,3 +81,7 @@ class PostDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny,]
     queryset = Post.objects.all().order_by('-Created_at')
     serializer_class = PostDetailListSerializer
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = CommentPost.objects.all().order_by('id')
+    serializer_class = CommentListSerializer

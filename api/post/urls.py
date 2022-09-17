@@ -5,8 +5,8 @@ from rest_framework import generics
 from . import views
 
 router = routers.DefaultRouter()
+router.register(r'comments',views.CommentViewSet)
 router.register(r'',views.PostDetailViewSet)
-
 
 urlpatterns = [
     path('create-post/<int:userId>/',views.createPost,name='createPost'),

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post
+from .models import CommentPost, Post
 from api.user.serializers import RegisterSerializer
 
 class PostDetailListSerializer(serializers.ModelSerializer):
@@ -8,3 +8,9 @@ class PostDetailListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id','PostTitle','Description','Image','UserID','CodeSnippet','CodeBlock','PostType','CodeLanguage','Created_at')
+
+class CommentListSerializer(serializers.ModelSerializer):
+    UserID = RegisterSerializer(read_only = True)
+    class Meta:
+        model = CommentPost
+        fields = ('id','Content','isAReply','ReplyID','Vote','UserID','PostID')
