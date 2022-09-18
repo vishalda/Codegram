@@ -3,9 +3,9 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
-from api.post.serializers import CommentListSerializer, PostDetailListSerializer
-from .models import CommentPost, Post
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer
+from .models import CommentPost, LikePost, Post
 from api.user.models import User
 
 @csrf_exempt
@@ -76,6 +76,21 @@ def updateCommentVote(request,commentId):
     except:
         return JsonResponse({'error':'Couldn\'t update the vote'})
     
+def updateLike(request,postId,userId):
+    try:
+        if not LikePost.objects.filter(PostID=postId,UserID=userId).exists():
+            Created_at = timezone.now()
+            PostID = get_object_or_404(Post,pk=postId)
+            UserID = get_object_or_404(User,pk=userId)
+            instance = LikePost.objects.create(PostID=PostID,UserID=UserID,Created_at=Created_at)
+            instance.save()
+        else:
+            instance = LikePost.objects.get(PostID=postId,UserID=userId)
+            instance.delete()
+
+        return JsonResponse({'success':'Like Updated'})
+    except:
+        return JsonResponse({'error':'Unable to like. Please try again'})
 
 class PostDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny,]
@@ -85,3 +100,8 @@ class PostDetailViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = CommentPost.objects.all().order_by('id')
     serializer_class = CommentListSerializer
+
+class LikeViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated,]
+    queryset = LikePost.objects.all().order_by('id')
+    serializer_class = LikeListSerializer

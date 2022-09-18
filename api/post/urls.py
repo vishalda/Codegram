@@ -6,6 +6,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'comments',views.CommentViewSet)
+router.register(r'likes',views.LikeViewSet)
 router.register(r'',views.PostDetailViewSet)
 
 urlpatterns = [
@@ -13,5 +14,6 @@ urlpatterns = [
     path('delete-post/<int:postId>/',views.deletePost,name='deletePost'),
     path('create-comment/<int:postId>/<int:userId>/',views.createComment,name='createComment'),
     path('update-comment-vote/<int:commentId>/',views.updateCommentVote,name='updateCommentVote'),
+    path('update-like/<int:postId>/<int:userId>/',views.updateLike,name='updateLike'),
     path('',include(router.urls)),
 ]
