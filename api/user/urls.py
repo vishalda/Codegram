@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.authtoken import views
+from django.contrib.auth import views as auth_views
 from rest_framework import routers
 from rest_framework import generics
 from . import views
@@ -9,6 +10,7 @@ router.register(r'',views.UserViewSet)
 
 
 urlpatterns = [
+    
     path('login/',views.login, name='signin'),
     path('logout/<int:id>/',views.signout,name='signout'),
     path('',include(router.urls)),
