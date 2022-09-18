@@ -47,8 +47,10 @@ class CommentPost(models.Model):
 class ForkedPost(models.Model):
 	UserID=models.ForeignKey(User,on_delete=models.CASCADE)
 	PostID=models.ForeignKey(Post,on_delete=models.CASCADE)
+	PostTitle=models.CharField(max_length=50,null=False)
 	Description=models.TextField(null=True)
 	Created_at=models.DateTimeField(null=False)
+	CodeBlock=models.TextField(blank=True,null=True)
 
 	def __str__(self):
 		return "%s forked %d"%(User.objects.values_list('username', flat=True).get(pk=self.UserID.id),Post.objects.values_list('id', flat=True).get(pk=self.PostID.id))

@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer
-from .models import CommentPost, LikePost, Post
+from .models import CommentPost, ForkedPost, LikePost, Post
 from api.user.models import User
 
 @csrf_exempt
@@ -29,6 +29,23 @@ def createPost(request,userId):
     instance = Post.objects.create(PostTitle=PostTitle,Description=Description,PostType=PostType,CodeBlock=CodeBlock,Image=Image,CodeSnippet=CodeSnippet,CodeLanguage=CodeLanguage,Created_at=Created_at,UserID=author,GroupId=group)
     instance.save()
     return JsonResponse({'success':'Post created successfully'})
+
+@csrf_exempt
+def updatePost(request,postId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only POST request\'s'})
+
+    try:
+        instance = get_object_or_404(Post,pk=postId)
+        if instance.PostType == 'CodeBlock' and 'CodeBlock' in request.POST.keys():
+            instance.CodeBlock = request.POST['CodeBlock']
+        else:
+            instance.PostTitle = request.POST['PostTitle']
+            instance.Description = request.POST['Description']
+        instance.save()
+        return JsonResponse({'success':'Updated post successfully'})
+    except:
+        return JsonResponse({'error':'Failed to update post'})
 
 @csrf_exempt
 def deletePost(request,postId):
@@ -91,6 +108,25 @@ def updateLike(request,postId,userId):
         return JsonResponse({'success':'Like Updated'})
     except:
         return JsonResponse({'error':'Unable to like. Please try again'})
+
+@csrf_exempt
+def createFork(request,postId,userId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only Post request'})
+    
+    try:
+        UserID = get_object_or_404(User,pk=userId)
+        PostID = get_object_or_404(Post,pk=postId)
+        PostTitle = PostID.PostTitle
+        Description = PostID.Description
+        Created_at = timezone.now()
+        CodeBlock = PostID.CodeBlock
+        instance = ForkedPost.objects.create(UserID=UserID,PostID=PostID,PostTitle=PostTitle,Description=Description,Created_at=Created_at,CodeBlock=CodeBlock)
+        instance.save()
+        return JsonResponse({'success':'Post forked successfully'})
+    except:
+        return JsonResponse({'error':'Failed to fork a post'})
+
 
 class PostDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny,]
