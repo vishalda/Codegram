@@ -147,3 +147,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+DEFAULT_FROM_EMAIL='codegram84@gmail.com'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_HOST_USER='codegram84@gmail.com'
+EMAIL_HOST_PASSWORD='abcd2022'
+EMAIL_USE_SSL= True
+EMAIL_USE_TLS= True
