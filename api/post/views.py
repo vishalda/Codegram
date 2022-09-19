@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer
-from .models import CommentPost, ForkedPost, LikePost, Post
+from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer,ForkedPostSerializer,PullRequestSerializer
+from .models import CommentPost, ForkedPost, LikePost, Post,PullRequest
 from api.user.models import User
 
 @csrf_exempt
@@ -127,6 +127,92 @@ def createFork(request,postId,userId):
     except:
         return JsonResponse({'error':'Failed to fork a post'})
 
+@csrf_exempt
+def updateFork(request,forkId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only POST request\'s'})
+    try:
+        instance = get_object_or_404(ForkedPost,pk=forkId)
+        if instance.PostType == 'CodeBlock' and 'CodeBlock' in request.POST.keys():
+            instance.CodeBlock = request.POST['CodeBlock']
+        else:
+            instance.PostTitle = request.POST['PostTitle']
+            instance.Description = request.POST['Description']
+        instance.save()
+        return JsonResponse({'success':'Updated fork successfully'})
+    except:
+        return JsonResponse({'error':'Failed to update fork'})
+
+@csrf_exempt
+def deleteFork(request,forkId):
+    try:
+        instance = get_object_or_404(ForkedPost,pk=forkId)
+        instance.delete()
+
+        return JsonResponse({'success':'Deleted fork successfully'})
+    except:
+        return JsonResponse({'error':'Fork doesn\'t exist'})
+
+@csrf_exempt
+def createPullRequest(request,forkId,userId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only Post request'})
+    try:
+        if request.user_is_authenticated:
+            Fork=get_object_or_404(ForkPost,pk=forkId)
+            UserID=get_object_or_404(User,pk=Fork.UserID)
+            PostID=get_object_or_404(Post,pk=Fork.PostID)
+            ForkID=Fork.PostID
+            ToUserID=Fork.UserID
+            FromUserID=request.current_user.id
+
+        else:
+            return JsonResponse({'error': 'Please Login and Try again'})
+
+        instance = PullRequest.objects.create(ForkID=ForkID,ToUserID=ToUserID,FromUserID=FromUserID)
+        instance.save()
+        return JsonResponse({'success':'Pull request sent successfully'})
+    except:
+        return JsonResponse({'error':'Failed to send a pull request'})
+
+@csrf_exempt
+def updatePullRequest(request,prId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only POST request\'s'})
+    try:
+        instance = get_object_or_404(PullRequest,pk=prId)
+        fork=get_object_or_404(ForkedPost,pk=instance.ForkID)
+        post=get_object_or_404(Post,pk=fork.PostID)
+        if post.PostType == 'CodeBlock':
+            if request.user_is_authenticated:
+                if instance.ToUserID==request.current_user.id:
+                    PRstatus = request.POST['PRstatus']
+                    if lower(PRstatus)=='true':
+                        post.CodeBlock=fork.CodeBlock
+                        instance.PRstatus=True
+                        return JsonResponse({'success': 'Pull Request merged'})
+
+                    elif lower(PRstatus)=='false':
+                        instance.PRstatus=False
+                        return JsonResponse({'success':'Pull Request declined'})
+
+@csrf_exempt
+def deletePullRequest(request,prId):
+    try:
+        instance = get_object_or_404(PullRequest,pk=prId)
+        instance.delete()
+
+        return JsonResponse({'success':'Deleted pull request successfully'})
+    except:
+        return JsonResponse({'error':'Pull Request doesn\'t exist'})
+
+
+
+
+
+
+
+
 
 class PostDetailViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny,]
@@ -141,3 +227,15 @@ class LikeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated,]
     queryset = LikePost.objects.all().order_by('id')
     serializer_class = LikeListSerializer
+
+class ForkedPostViewSet(viewsets.ModelViewSet):
+    queryset = ForkedPost.objects.all().order_by('id')
+    serializer_class = ForkPostsSerializer
+
+class PullRequestViewSet(viewsets.ModelViewSets):
+    permission_classes = [IsAuthenticated,]
+    queryset = PullRequest.objects.all().order_by('id')
+    serializer_class = PullRequestSerializer
+
+
+
