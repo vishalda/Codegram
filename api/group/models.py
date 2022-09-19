@@ -5,7 +5,7 @@ from api.user.models import User
 # Create your models here.
 class Group(models.Model):
     Title = models.CharField(max_length=50)
-    Description = models.TextField(null=True)
+    Description = models.TextField(null=True,blank=True)
     Image = models.ImageField(null=True,blank=True)
     admin = models.ForeignKey(User,related_name='admin',on_delete=models.CASCADE)
 
