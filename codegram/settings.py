@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'api',
     'api.user',
     'api.post',
-    'api.group'
+    'api.group',
+    'django_rest_passwordreset'
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT = 587 
+EMAIL_HOST_USER='codegram84@gmail.com'
+EMAIL_HOST_PASSWORD='rapavnkwndecqiqe'
+EMAIL_USE_TLS= True
+

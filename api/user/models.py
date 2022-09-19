@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,UserManager
-
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
 #Base User model
 class User(AbstractUser):
     name = models.CharField(max_length=50, default='Anonymous')
@@ -47,4 +50,22 @@ class Message(models.Model):
 
     def __str__(self):
         return "from %s to %s"%(User.objects.values_list('username', flat=True).get(pk=self.UserID_1.id),User.objects.values_list('username', flat=True).get(pk=self.UserID_2.id))
-    
+
+
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    email_plaintext_message = "http://127.0.0.1:8000{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
+
+    send_mail(
+        # title:
+        "Password Reset for {title}".format(title="Codegram"),
+        # message:
+        email_plaintext_message,
+        # from:
+        "codegram84@gmail.com",
+        # to:
+        [reset_password_token.user.email]
+    )
