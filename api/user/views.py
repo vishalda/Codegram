@@ -9,12 +9,15 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 import random
 import re
+from django.core.mail import send_mail
 
 
 
 #Generating Session tokens
 def generateSessionToken(length=10):
     return ''.join(random.SystemRandom().choice([chr(i)  for i in range(97,123)] + [str(i) for i in range(10)]) for _ in range(length))
+
+
 
 def validateRequest(username,password):    
     #Checking valid username using regex
@@ -92,3 +95,14 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permission() for permission in self.permission_classes_by_action[self.action]]
         except:
             return [permission() for permission in self.permission_classes]
+
+
+
+
+
+
+
+
+
+
+    

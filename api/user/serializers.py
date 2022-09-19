@@ -21,9 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     write_only=True, required=True, validators=[validate_password])
   password2 = serializers.CharField(write_only=True, required=True)
 
-  phone=serializers.CharField(
-  required=True,
-  validators=[UniqueValidator(queryset=User.objects.all()), RegexValidator(regex=r'^[6-9]\d{9}$')]
+  phone=serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all()),RegexValidator(regex=r'^[6-9]\d{9}$')]
   
 
     )
@@ -50,5 +48,19 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     user.set_password(validated_data['password'])
     user.save()
-
     return user
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
