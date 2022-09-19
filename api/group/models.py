@@ -7,6 +7,7 @@ class Group(models.Model):
     Title = models.CharField(max_length=50)
     Description = models.TextField(null=True)
     Image = models.ImageField(null=True,blank=True)
+    admin = models.ForeignKey(User,related_name='admin',on_delete=models.CASCADE)
 
     def __str__(self):
         return self.Title
