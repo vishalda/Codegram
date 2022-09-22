@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CommentPost, LikePost, Post
+from .models import CommentPost, LikePost, Post ,ForkedPost,PullRequest
 from api.user.serializers import RegisterSerializer
 
 class PostDetailListSerializer(serializers.ModelSerializer):
@@ -25,6 +25,6 @@ class ForkPostsSerializer(serializers.ModelSerializer):
         fields=('id','UserID','PostID','PostTitle','Description','CodeBlock')
 class PullRequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model=PullRequestSerializer
+        model=PullRequest
         fields=('id','ForkID','ToUserID','FromUserID','PRStatus')
         

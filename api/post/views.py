@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer,ForkedPostSerializer,PullRequestSerializer
+from api.post.serializers import CommentListSerializer, PostDetailListSerializer, LikeListSerializer,ForkPostsSerializer,PullRequestSerializer
 from .models import CommentPost, ForkedPost, LikePost, Post,PullRequest
 from api.user.models import User
 
@@ -195,6 +195,10 @@ def updatePullRequest(request,prId):
                     elif lower(PRstatus)=='false':
                         instance.PRstatus=False
                         return JsonResponse({'success':'Pull Request declined'})
+    except:
+        return JsonResponse({'error':'Pull Request doesn\'t exist'})
+
+
 
 @csrf_exempt
 def deletePullRequest(request,prId):
@@ -205,12 +209,6 @@ def deletePullRequest(request,prId):
         return JsonResponse({'success':'Deleted pull request successfully'})
     except:
         return JsonResponse({'error':'Pull Request doesn\'t exist'})
-
-
-
-
-
-
 
 
 
@@ -232,7 +230,7 @@ class ForkedPostViewSet(viewsets.ModelViewSet):
     queryset = ForkedPost.objects.all().order_by('id')
     serializer_class = ForkPostsSerializer
 
-class PullRequestViewSet(viewsets.ModelViewSets):
+class PullRequestViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated,]
     queryset = PullRequest.objects.all().order_by('id')
     serializer_class = PullRequestSerializer
