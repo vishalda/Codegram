@@ -17,5 +17,10 @@ urlpatterns = [
     path('update-comment-vote/<int:commentId>/',views.updateCommentVote,name='updateCommentVote'),
     path('update-like/<int:postId>/<int:userId>/',views.updateLike,name='updateLike'),
     path('fork-post/<int:postId>/<int:userId>/',views.createFork,name="createFork"),
+    path('update-fork-post/<int:forkId>/',views.updateFork,name="updateFork"),
+    path('delete-fork-post/<int:forkId>/',views.deleteFork,name="deleteFork"),
+    path('create-pullreq/<int:forkId>/<int:userId>/',views.createPullRequest,name="createPullRequest"),
+    path('update-pullreq/<int:prId>/',views.updatePullRequest,name="updatePullRequest"),
+    path('delete-pullreq/<int:prId>/',views.deletePullRequest,name="deletePullRequest"),
     path('',include(router.urls)),
 ]
