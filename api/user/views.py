@@ -2,8 +2,9 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model,login as auth_login,logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
-from api.user.models import User
+from api.user.models import FriendRequest, User
 from .serializers import RegisterSerializer
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import permission_classes
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
@@ -83,6 +84,34 @@ def signout(request,id):
         return JsonResponse({'error':'User doesn\'t exist'})
 
     return JsonResponse({'success':'Logged out successfully'})
+
+@csrf_exempt
+def createFriendRequest(request,toUserId,fromUserId):
+    if request.method != "POST":
+        return JsonResponse({'error':'Accepting only POST request\'s'})
+    
+    try:
+        FromUserID = get_object_or_404(User,pk=fromUserId)
+        ToUserID = get_object_or_404(User,pk=toUserId)
+        instance = FriendRequest.objects.create(StatusID=None,FromUserID=FromUserID,ToUserID=ToUserID)
+        instance.save()
+        return JsonResponse({'success':'Request created successfully'})
+    except:
+        return JsonResponse({'error':'Friend Request not created'})
+
+@csrf_exempt
+def updateFriendRequestStatus(request,requestId,status):
+    try:
+        instance = FriendRequest.objects.get(pk=requestId)
+        instance.StatusID = True if status == 'Yes' else False
+        if status=='No':
+            instance.delete()
+        else:
+            instance.save()
+        return JsonResponse({'success':'Updated request successfully'})
+    except:
+        return JsonResponse({'error':'Request not updated'})
+        
 
 class UserViewSet(viewsets.ModelViewSet):
     #permission_classes_by_action = {'create':[AllowAny]}
