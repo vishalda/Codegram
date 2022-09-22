@@ -20,11 +20,14 @@ class LikeListSerializer(serializers.ModelSerializer):
         model = LikePost
         fields = ('id','PostID','UserID','Created_at')
 class ForkPostsSerializer(serializers.ModelSerializer):
+    UserID = RegisterSerializer(read_only = True)
+
     class Meta:
         model=ForkedPost
         fields=('id','UserID','PostID','PostTitle','Description','CodeBlock')
 class PullRequestSerializer(serializers.ModelSerializer):
+    UserID = RegisterSerializer(read_only = True)
+
     class Meta:
         model=PullRequest
         fields=('id','ForkID','ToUserID','FromUserID','PRStatus')
-        
