@@ -1,7 +1,8 @@
+from json import JSONDecodeError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from api.group.models import Group
+from api.group.models import FollowGroup, Group
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from api.group.serializers import GroupListSerializer
@@ -47,6 +48,23 @@ def deleteGroup(request,groupId):
     except:
         return JsonResponse({'error':'Unable to find group'})
 
+def followGroup(request,userId,groupId):
+    try:
+        UserID = get_object_or_404(User,pk=userId)
+        GroupID = get_object_or_404(Group,pk=groupId)
+        instance = FollowGroup.objects.create(UserID=UserID,GroupID=GroupID)
+        instance.save()
+        return JsonResponse({'success':'Group followed'})
+    except:
+        return JsonResponse({'error':'Error occurred while following, please try again'})
+
+def unFollowGroup(request,userId,groupId):
+    try:
+        instance = get_object_or_404(FollowGroup,UserID=userId,GroupID=groupId)
+        instance.delete()
+        return JsonResponse({'success':'Group unfollowed successfully'})
+    except:
+        return JsonResponse({'error':'Unable to unfollow group'})
 class GroupViewSet(viewsets.ModelViewSet):
     permission_classes=[AllowAny]
     queryset = Group.objects.all().order_by('id')
